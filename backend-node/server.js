@@ -1,10 +1,18 @@
-// server.js
 const express = require('express');
 const axios = require('axios');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
+// 🔍 ROTA DE TESTE
+app.get('/', (req, res) => {
+  res.send('🚀 Backend rodando com sucesso');
+});
+
+// 🔐 ROTA SEGURA PARA API EXTERNA
 app.get('/api/dados', async (req, res) => {
   try {
     const response = await axios.get('https://api.hiperfocoplay.com', {
@@ -15,8 +23,16 @@ app.get('/api/dados', async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
-    res.status(500).json({ error: 'Erro na API' });
+    console.error(error.message);
+    res.status(500).json({
+      error: 'Erro ao acessar API externa'
+    });
   }
 });
 
-app.listen(3000, () => console.log('Servidor rodando'));
+// 🚀 PORTA DINÂMICA (Render)
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`🔥 Servidor rodando na porta ${PORT}`);
+});
